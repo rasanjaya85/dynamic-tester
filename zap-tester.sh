@@ -5,8 +5,11 @@ TARGET_VERSION=$1
 # the target URL for ZAP to scan
 TARGET_URL="http://192.168.33.20:8888"
 
-PRODUCT_CONTAINER=$(docker run -p 8888:8080 -d registry.wso2.org/weather-service:${TARGET_VERSION})
+printf "Starting the Product Container"
+PRODUCT_CONTAINER=$(docker run -p 8888:8080 -d registry.wso2.org/weather-service:1.0.${TARGET_VERSION})
+
 if [ $? -eq 0 ]; then
+    printf "Starting the Zap Container"
     CONTAINER_ID=$(docker run -u zap -p 2375:2375 -d owasp/zap2docker-weekly zap.sh -daemon -port 2375 -host 127.0.0.1 -config api.disablekey=true -config scanner.attackOnStart=true -config view.mode=attack)
 else
     exit
